@@ -10,7 +10,7 @@ SWAGGER_URL = '/api/docs'
 API_URL = '/api/swagger.json'
 
 app = Flask(__name__)
-api = Api(app, api_version='0.0', title="LSTMM-NN")
+api = Api(app, api_version='1.0', title="LSTMM-NN")
 CORS(app)
 
 api.add_resource(rn.test, '/api/test')
