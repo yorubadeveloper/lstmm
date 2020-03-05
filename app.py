@@ -10,10 +10,10 @@ SWAGGER_URL = '/api/docs'
 API_URL = '/api/swagger.json'
 
 app = Flask(__name__)
-api = Api(app, api_version='0.0', title="RoboAdvisor v 1.0.0")
+api = Api(app, api_version='0.0', title="LSTMM-NN")
 CORS(app)
 
-api.add_resource(rn.test, '/api/v1/test')
+api.add_resource(rn.test, '/api/test')
 
 
 swaggerui_blueprint = get_swaggerui_blueprint(
