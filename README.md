@@ -1,2 +1,2 @@
 # lstmm
-LSTMM-NN
+LSTMM-NN Final Year Project
