@@ -1,0 +1,3 @@
+Please see documentation here: https://github.com/swege/flask-restful-swagger-2.0
+
+

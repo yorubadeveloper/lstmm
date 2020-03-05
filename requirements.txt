@@ -1,0 +1,6 @@
+gunicorn==19.9.0
+flask
+flask-restful
+flask-restful-swagger-2
+flask-swagger-ui
+Flask-Cors
