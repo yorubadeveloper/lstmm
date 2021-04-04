@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>{% block title %} {% endblock title %}</title>
+
+    <!-- load Google fonts -->
+    <link
+        href="https://fonts.googleapis.com/icon?family=Material+Icons%7CPlayfair+Display:400,400i,700%7CRoboto+Condensed:400,700"
+        rel="stylesheet">
+    <!-- Crypto Styles -->
+    <link id="crypto-stylesheet" rel="stylesheet" href="{{ url_for('static', filename='/css/night-gold-orange.css') }}">
+    <!-- page specific CSS {{ url_for('static', filename='') }} -->
+
+</head>
+
+<body class="mdc-typography pace-on mdc-theme--background crypro-theme-gradient">
+
+    <div class="crypto-loader"></div>
+
+
+    <div class="crypto-wrapper">
+
+        <div class="crypto-sidenav">
+            <nav class="crypto-navigation">
+                <a href="{{ url_for('index') }}" class="crypto-navigation__logo">
+                    <!-- Image element or even SVG can be used here -->
+                    <!-- <img src="/cryptum/demo/assets/images/crypto-logo.svg" alt="Crypto" class="crypto-navigation__logo-image">
+                    -->
+                    <svg height="40" viewBox="0 0 40 40" width="40" xmlns="http://www.w3.org/2000/svg">
+                        <g fill-rule="nonzero" transform="translate(22 22)">
+                            <path d="m0 3.64v14.26c9.44-.94 16.96-8.46 17.9-17.9h-14.26c-.62 1.7-1.94 3.02-3.64 3.64z"
+                                fill="var(--mdc-theme-primary-800)" />
+                            <path
+                                d="m-22-2c0 10.38 7.9 18.9 18 19.9v-14.26c-2.32-.84-4-3.04-4-5.64s1.68-4.8 4-5.64v-14.26c-10.1 1-18 9.52-18 19.9z"
+                                fill="var(--mdc-theme-primary-200)" />
+                            <path d="m3.64-4h14.26c-.94-9.44-8.46-16.96-17.9-17.9v14.26c1.7.62 3.02 1.94 3.64 3.64z"
+                                fill="var(--mdc-theme-primary-600)" />
+                        </g>
+                    </svg>
+
+                </a>
+                <ul class="crypto-navigation__list">
+
+                    <li class="crypto-navigation__list-item mdc-ripple-surface crypto-navigation__list-item--active">
+                        <a href="{{ url_for('index') }}">
+                            <i class="material-icons crypto-navigation__list-item__icon" aria-hidden="true">timeline</i>
+
+                            <span
+                                class="crypto-navigation__list-item__label mdc-theme--on-surface mdc-typography--overline">
+                                Dashboard
+                            </span>
+                        </a>
+                    </li>
+
+                    <li class="crypto-navigation__list-item mdc-ripple-surface ">
+                        <a href="{{ url_for('wallet') }}">
+                            <i class="material-icons crypto-navigation__list-item__icon"
+                                aria-hidden="true">account_balance_wallet</i>
+
+                            <span class="crypto-navigation__list-item__badge">2</span>
+
+                            <span
+                                class="crypto-navigation__list-item__label mdc-theme--on-surface mdc-typography--overline">
+                                Wallet
+                            </span>
+                        </a>
+                    </li>
+
+                    <li class="crypto-navigation__list-item mdc-ripple-surface ">
+                        <a href="reports.html">
+                            <i class="material-icons crypto-navigation__list-item__icon"
+                                aria-hidden="true">bar_chart</i>
+
+                            <span
+                                class="crypto-navigation__list-item__label mdc-theme--on-surface mdc-typography--overline">
+                                Reports
+                            </span>
+                        </a>
+                    </li>
+
+                    <li class="crypto-navigation__list-item mdc-ripple-surface ">
+                        <a href="profile.html">
+                            <i class="material-icons crypto-navigation__list-item__icon" aria-hidden="true">person</i>
+
+                            <span
+                                class="crypto-navigation__list-item__label mdc-theme--on-surface mdc-typography--overline">
+                                Profile
+                            </span>
+                        </a>
+                    </li>
+
+                    <li class="crypto-navigation__list-item mdc-ripple-surface ">
+                        <a href="elements.html">
+                            <i class="material-icons crypto-navigation__list-item__icon" aria-hidden="true">category</i>
+
+                            <span
+                                class="crypto-navigation__list-item__label mdc-theme--on-surface mdc-typography--overline">
+                                UI Elements
+                            </span>
+                        </a>
+                    </li>
+
+                    <li class="crypto-navigation__list-item mdc-ripple-surface ">
+                        <a href="login.html">
+                            <i class="material-icons crypto-navigation__list-item__icon"
+                                aria-hidden="true">power_settings_new</i>
+
+                            <span
+                                class="crypto-navigation__list-item__label mdc-theme--on-surface mdc-typography--overline">
+                                Logout
+                            </span>
+                        </a>
+                    </li>
+
+                </ul>
+            </nav>
+
+
+        </div>
+
+        {% block content %}
+        {% endblock content %}
+
+    </div>
+
+    <div class="crypto-menu-switches">
+        <div class="crypto-menu-switches--handle">
+            <i class="material-icons">settings</i>
+        </div>
+        <!-- RTL switch -->
+        <div class="switch-wrapper mdc-theme--on-primary">
+            <div class="mdc-switch crypto-rtl-switch-selector">
+                <div class="mdc-switch__track"></div>
+                <div class="mdc-switch__thumb-underlay">
+                    <div class="mdc-switch__thumb">
+                        <input type="checkbox" id="rtl-switch" class="mdc-switch__native-control" role="switch"
+                            aria-checked="false">
+                    </div>
+                </div>
+            </div>
+            <label for="rtl-switch">RTL</label>
+        </div>
+        <!-- theme switch -->
+        <div class="switch-wrapper mdc-theme--on-primary">
+            <div class="mdc-switch crypto-theme-switch-selector">
+                <div class="mdc-switch__track"></div>
+                <div class="mdc-switch__thumb-underlay">
+                    <div class="mdc-switch__thumb">
+                        <input type="checkbox" id="crypto-theme-switch" class="mdc-switch__native-control" role="switch"
+                            aria-checked="false">
+                    </div>
+                </div>
+            </div>
+            <label for="crypto-theme-switch">Switch theme</label>
+        </div>
+    </div>
+
+        <script>
+        var graphdata = {{ data |safe }}
+    </script>
+
+    <!-- initialise material components js -->
+    <script src="{{ url_for('static', filename='/js/material-components-web.min.js') }}"></script>
+    <script>mdc.autoInit()</script>
+    <!-- initialise marquee js -->
+    <script src="{{ url_for('static', filename='/js/marquee3k.js') }}"></script>
+    <script>Marquee3k.init()</script>
+    <!-- layout js -->
+    <script data-pace-options='{ "ajax": false, "restartOnRequestAfter": false }'
+        src="{{ url_for('static', filename='/js/pace.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='/js/apexcharts.min.js') }}"></script>
+    <!-- switcher js -->
+    <script src="{{ url_for('static', filename='/js/partials/switcher.js') }}"></script>
+    <!-- page specific JS -->
+
+    <script src="{{ url_for('static', filename='/js/pages/index.js') }}"></script>
+
+
+
+
+
+</body>
+
+</html>
