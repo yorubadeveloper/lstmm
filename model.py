@@ -85,14 +85,12 @@ def forecaster(Data, days_to_predict):
     #generate time series sequences for the forecast
     generator = TimeseriesGenerator(train, train, length=n_input, batch_size=8)
 
-
-
     model = Sequential()
     model.add(GRU(75, input_shape=(n_input, n_features)))
     model.add(Dense(1))
-    optimizer = Adam(lr=1e-3)
-    model.compile(loss='mean_squared_error', optimizer=optimizer, metrics=['accuracy'])
-    history = model.fit_generator(generator, epochs=10)
+    optimizer = keras.optimizers.Adam(learning_rate=0.001)
+    model.compile(optimizer=optimizer, loss='mse', metrics=['accuracy'])
+    history = model.fit_generator(generator, epochs=100)
 
     # evaluate the model
     score = model.evaluate(generator)
