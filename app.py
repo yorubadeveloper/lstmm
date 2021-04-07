@@ -12,6 +12,7 @@ import matplotlib.pyplot as plt
 # %matplotlib inline
 import numpy as np
 import pandas as pd
+from statsmodels.tsa.arima_model import ARIMAResults
 import tensorflow as tf
 from keras.optimizers import *
 from keras.models import Sequential, model_from_json
@@ -123,7 +124,12 @@ def forecaster(Data, days_to_predict):
     df_predict = pd.DataFrame(scaler.inverse_transform(pred_list),
                               index=future_dates[-n_input:].index, columns=['Forecast'])
 
-    df_proj = pd.concat([Open, df_predict], axis=1)
+    df_predictions = pd.DataFrame(pred_train,
+                                  index=Open.iloc[30:].index, columns=['Predictions'])
+
+    df_proj = pd.concat([Open.iloc[30:], df_predict], axis=1)
+    df_proj = pd.concat([df_proj, df_predictions], axis=1)
+    df_proj = df_proj['2020-1-01':]
 
     plot_data = [
         go.Scatter(
@@ -138,7 +144,7 @@ def forecaster(Data, days_to_predict):
         ),
         go.Scatter(
             x=df_proj.index,
-            y=pred_train,
+            y=df_proj['Predictions'],
             name='Prediction'
         )
     ]
@@ -165,6 +171,73 @@ def forecaster(Data, days_to_predict):
             break
     return res
 
+
+def validDate(date_text):
+    import datetime
+    try:
+        datetime.datetime.strptime(date_text, '%Y-%m-%d')
+        return True
+    except ValueError:
+        return False
+
+
+def fetchAllData():
+
+    allDataColumns = ["BCHAIN/TOTBC", "BCHAIN/MKTCP", "BCHAIN/TRFEE", "BCHAIN/TRFUS", "BCHAIN/NETDF",
+                      "BCHAIN/NTRAN", "BCHAIN/NTRAT", "BCHAIN/NTREP", "BCHAIN/NADDU", "BCHAIN/NTRBL",
+                      "BCHAIN/TOUTV", "BCHAIN/ETRAV", "BCHAIN/ETRVU", "BCHAIN/TRVOU", "BCHAIN/TVTVR",
+                      "BCHAIN/MKPRU", "BCHAIN/CPTRV", "BCHAIN/CPTRA", "BCHAIN/HRATE", "BCHAIN/MIREV",
+                      "BCHAIN/ATRCT", "BCHAIN/BCDDC", "BCHAIN/BCDDE", "BCHAIN/BCDDW", "BCHAIN/BCDDM",
+                      "BCHAIN/BCDDY", "BCHAIN/BLCHS", "BCHAIN/AVBLS", "BCHAIN/MWTRV", "BCHAIN/MWNUS",
+                      "BCHAIN/MWNTD", "BCHAIN/MIOPM", "BCHAIN/DIFF"]
+
+    todaysDate = datetime.today().strftime('%Y-%m-%d')
+    quandl.ApiConfig.api_key = 'idjLfySzftDM7Cn1oSGi'
+    data = quandl.get(allDataColumns, start_date='2019-01-01', end_date=todaysDate)
+    data.rename(columns=lambda x: x[0:12], inplace=True)
+
+    data["Date"] = data.index
+    data = data[data["Date"].notnull()]
+
+    data.fillna(method='ffill', inplace=True)
+    data = data.dropna(thresh=len(data) - 3, axis=1)  # to drop all columns where most of the entries are NAN
+
+    return data
+
+
+def arima_model(days):
+    allData = fetchAllData()
+    results = ARIMAResults.load('arima_model.pkl')
+    pred = results.get_prediction(start=pd.to_datetime('2020-01-01'), dynamic=False)
+    y_forecasted = pred.predicted_mean
+    y_truth = allData["BCHAIN/MKPRU"]['2020-01-01':]
+    pred_uc = results.get_forecast(steps=days)
+
+    plot_data = [
+        go.Scatter(
+            x=allData["BCHAIN/MKPRU"]['2020-1-01':].index,
+            y=allData["BCHAIN/MKPRU"]['2020-1-01':],
+            name='Actual'
+        ),
+        go.Scatter(
+            x=pred_uc.predicted_mean.index,
+            y=pred_uc.predicted_mean,
+            name='Prediction'
+        ),
+        go.Scatter(
+            x=allData["BCHAIN/MKPRU"]['2020-1-01':].index,
+            y=y_forecasted,
+            name='Forecast'
+        )
+    ]
+    plot_layout = go.Layout(
+        title='Bitcoin stock price prediction'
+    )
+    fig = go.Figure(data=plot_data, layout=plot_layout)
+    fig.write_html("templates/graph2.html", auto_open=False)
+    return pred_uc
+
+
 app = Flask(__name__)
 
 
@@ -174,12 +247,31 @@ def index():
 
     print(res)
 
-    return render_template('index.html', res=res, data=res)
+    response = arima_model(30)
+
+    forecast = [x for x in response.predicted_mean]
+    date = [x for x in response.predicted_mean.index.strftime('%Y-%m-%d')]
+    arima_data = {}
+    for key in date:
+        for value in forecast:
+            arima_data[key] = float(np.round(value, 2))
+            forecast.remove(value)
+            break
+
+
+    print(arima_data)
+
+    return render_template('index.html', res=res, data=res, arima=response)
 
 
 @app.route('/graph')
 def graph():
     return render_template('graph.html')
+
+
+@app.route('/graph2')
+def graph2():
+    return render_template('graph2.html')
 
 
 @app.route('/wallet/')
@@ -188,4 +280,4 @@ def wallet():
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, port=5050)
