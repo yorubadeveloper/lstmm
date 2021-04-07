@@ -72,8 +72,8 @@ def fetchSpecificData(*, startDate,endDate,queryParams, **kwargs):
 
 todaysDate=datetime.today().strftime('%Y-%m-%d')
 data=fetchSpecificData(startDate="2015-01-01", endDate=todaysDate,queryParams=["BCHAIN/MKPRU"])
-data = data.dropna()
-Open = data[["BCHAIN/MKPRU"]]
+all_data = data.dropna()
+Open = all_data[["BCHAIN/MKPRU"]]
 
 
 def forecaster(Data, days_to_predict):
@@ -205,8 +205,8 @@ def fetchAllData():
     return data
 
 
-def arima_model(days):
-    allData = fetchAllData()
+def arima_model(Data, days):
+    allData = Data
     results = ARIMAResults.load('arima_model.pkl')
     pred = results.get_prediction(start=pd.to_datetime('2020-01-01'), dynamic=False)
     y_forecasted = pred.predicted_mean
@@ -247,7 +247,7 @@ def index():
 
     print(res)
 
-    response = arima_model(30)
+    response = arima_model(all_data, 30)
 
     forecast = [x for x in response.predicted_mean]
     date = [x for x in response.predicted_mean.index.strftime('%Y-%m-%d')]
